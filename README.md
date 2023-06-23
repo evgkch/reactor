@@ -1,6 +1,6 @@
 # channeljs
 A lib to provide reactions on function call.
-It looks like https://github.com/evgkch/channelsjs.git where you subscribe on a function call rather than sending a message.
+It looks like https://github.com/evgkch/channeljs.git where you subscribe on a function call rather than sending a message.
 Since any function has its own unique ref, there is no need to create an instance - the singleton provides the functionality.
 
 ## Usage

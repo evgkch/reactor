@@ -1,0 +1,26 @@
+{
+  "name": "reagir",
+  "version": "1.0.0",
+  "description": "A lib to provide reactions on object' refs",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evgkch/reagirjs.git"
+  },
+  "keywords": [
+    "channel",
+    "emitter",
+    "receiver",
+    "transmitter",
+    "react"
+  ],
+  "author": "Evgeny Kucherenko",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/evgkch/reagirjs/issues"
+  },
+  "homepage": "https://github.com/evgkch/reagirjs#readme"
+}

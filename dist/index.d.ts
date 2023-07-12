@@ -3,7 +3,7 @@ export declare type Listener<F extends Func> = (res: ReturnType<F>, ...args: Par
 /**
  * Function' call with reaction
  */
-export declare namespace Cx {
+export declare namespace cx {
     /**
      * Call func and provides reaction to it subscribers.
      *
@@ -22,7 +22,7 @@ export declare namespace Cx {
 /**
  * Function' subscription manage
  */
-export declare namespace Rx {
+export declare namespace rx {
     /**
      * Subscribe on a func call
      * Returns the provided listener.

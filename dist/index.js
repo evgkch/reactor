@@ -2,8 +2,8 @@ const reactions = new WeakMap;
 /**
  * Function' call with reaction
  */
-export var Cx;
-(function (Cx) {
+export var cx;
+(function (cx) {
     /**
      * Call func and provides reaction to it subscribers.
      *
@@ -18,7 +18,7 @@ export var Cx;
                 cb(res, ...args);
         return res;
     }
-    Cx.call = call;
+    cx.call = call;
     /**
      * Call func async and provides reaction to it subscribers.
      *
@@ -28,13 +28,13 @@ export var Cx;
     function call_async(f, ...args) {
         return new Promise((resolve) => setTimeout(() => resolve(call(f, ...args)), 0));
     }
-    Cx.call_async = call_async;
-})(Cx || (Cx = {}));
+    cx.call_async = call_async;
+})(cx || (cx = {}));
 /**
  * Function' subscription manage
  */
-export var Rx;
-(function (Rx) {
+export var rx;
+(function (rx) {
     /**
      * Subscribe on a func call
      * Returns the provided listener.
@@ -49,7 +49,7 @@ export var Rx;
             reactions.set(f, new Set([listener]));
         return listener;
     }
-    Rx.on = on;
+    rx.on = on;
     /**
      * Subscribe on a func call once (subscriber will be deleted after send).
      * Returns the provided listener.
@@ -62,7 +62,7 @@ export var Rx;
             listener(res, ...args);
         });
     }
-    Rx.once = once;
+    rx.once = once;
     /**
      * Subscribe on a func call weak (subscriber will be deleted if it will be dead).
      * Returns a WeakRef of the provided listener.
@@ -80,7 +80,7 @@ export var Rx;
         });
         return listener;
     }
-    Rx.onweak = onweak;
+    rx.onweak = onweak;
     /**
      * Ubsubscribe listener from the func call.
      * Returns true if func and listener existed, false otherwise.
@@ -90,5 +90,5 @@ export var Rx;
     function off(f, listener) {
         return !!reactions.get(f)?.delete(listener);
     }
-    Rx.off = off;
-})(Rx || (Rx = {}));
+    rx.off = off;
+})(rx || (rx = {}));

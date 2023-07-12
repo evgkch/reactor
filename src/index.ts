@@ -7,7 +7,7 @@ const reactions = new WeakMap;
 /**
  * Function' call with reaction
  */
-export namespace Cx {
+export namespace cx {
 
 	/**
 	 * Call func and provides reaction to it subscribers.
@@ -39,7 +39,7 @@ export namespace Cx {
 /**
  * Function' subscription manage
  */
-export namespace Rx {
+export namespace rx {
 
 	/**
 	 * Subscribe on a func call

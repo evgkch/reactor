@@ -1,13 +1,27 @@
 export type Func = (...args: any[]) => any;
 
-export type Listener<F extends Func> = (res: ReturnType<F>, ...args: Parameters<F>) => void;
+export type OnFrame<F extends Func> = (y: ReturnType<F>, ...xs: Parameters<F>) => void;
 
-const reactions = new WeakMap;
+export type Reactions = WeakMap<Func, Set<OnFrame<Func>>>;
+
+export default class Reactor {
+
+	#reactions: Reactions = new WeakMap;
+	readonly cx: Cx = new Cx(this.#reactions);
+	readonly rx: Rx = new Rx(this.#reactions);
+
+}
 
 /**
  * Function' call with reaction
  */
-export namespace cx {
+export class Cx {
+
+	#reactions: Reactions;
+
+	constructor(reactions: Reactions) {
+		this.#reactions = reactions;
+	}
 
 	/**
 	 * Call func and provides reaction to it subscribers.
@@ -15,9 +29,9 @@ export namespace cx {
 	 * Ex.: cx.call(<func>, ...args)
 	 * Returns the func result
 	 */
-	export function call<F extends Func>(f: F, ...args: Parameters<F>): ReturnType<F> {
+	call<F extends Func>(f: F, ...args: Parameters<F>): ReturnType<F> {
 		const res = f(...args);
-		const listeners = reactions.get(f);
+		const listeners = this.#reactions.get(f);
 		if (listeners && listeners.size > 0) for (const cb of listeners) cb(res, ...args);
 		return res;
 	}
@@ -28,9 +42,9 @@ export namespace cx {
 	 * Ex.: cx.call_async(<func>, ...args)
 	 * Returns the func result promise
 	 */
-	export function call_async<F extends Func>(f: F, ...args: Parameters<F>): Promise<ReturnType<F>> {
+	call_async<F extends Func>(f: F, ...args: Parameters<F>): Promise<ReturnType<F>> {
 		return new Promise((resolve) =>
-			setTimeout(() => resolve(call(f, ...args)), 0)
+			setTimeout(() => resolve(this.call(f, ...args)), 0)
 		);
 	}
 
@@ -39,7 +53,13 @@ export namespace cx {
 /**
  * Function' subscription manage
  */
-export namespace rx {
+export class Rx {
+
+	#reactions: Reactions;
+
+	constructor(reactions: Reactions) {
+		this.#reactions = reactions;
+	}
 
 	/**
 	 * Subscribe on a func call
@@ -47,12 +67,12 @@ export namespace rx {
 	 *
 	 * Ex.: rx.once(<func>, listener)
 	 */
-	export function on<F extends Func>(f: F, listener: Listener<F>): Listener<F> {
-		const listeners = reactions.get(f) as Set<Listener<F>> | void;
+	on<F extends Func>(f: F, listener: OnFrame<F>): OnFrame<F> {
+		const listeners = this.#reactions.get(f) as Set<OnFrame<F>> | void;
 		if (listeners)
 			listeners.add(listener);
 		else
-			reactions.set(f, new Set([listener]));
+			this.#reactions.set(f, new Set([listener]));
 
 		return listener;
   	}
@@ -63,11 +83,11 @@ export namespace rx {
 	 *
 	 * Ex.: rx.once(<func>, listener)
 	 */
-	export function once<F extends Func>(f: F, listener: Listener<F>): Listener<F> {
-		return on(f, function g(res, ...args) {
-			off(f, g);
+	once<F extends Func>(f: F, listener: OnFrame<F>): OnFrame<F> {
+		return this.on(f, (self => function g(res, ...args) {
+			self.off(f, g);
 			listener(res, ...args);
-		});
+		})(this));
   	}
 
 	/**
@@ -76,15 +96,15 @@ export namespace rx {
 	 *
 	 * Ex.: rx.onweak(<func>, listener)
 	 */
-	export function onweak<F extends Func>(f: F, listener: Listener<F>): Listener<F> {
+	onweak<F extends Func>(f: F, listener: OnFrame<F>): OnFrame<F> {
 		const ref = new WeakRef(listener);
-		on(f, function g(res, ...args) {
+		this.on(f, (self => function g(res, ...args) {
 			const listener = ref.deref();
 			if (listener)
 				listener(res, ...args);
 			else
-				off(f, g);
-		});
+				self.off(f, g);
+		})(this));
         return listener;
   	}
 
@@ -94,8 +114,8 @@ export namespace rx {
 	 *
 	 * Ex.: rx.off(<func>, listener)
 	 */
-	export function off<F extends Func>(f: F, listener: Listener<F>): boolean {
-		return !!reactions.get(f)?.delete(listener);
+	off<F extends Func>(f: F, listener: OnFrame<F>): boolean {
+		return !!this.#reactions.get(f)?.delete(listener);
 	}
 
 }

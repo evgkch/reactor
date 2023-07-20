@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/evgkch/reagirjs.git"
+    "url": "git+https://github.com/evgkch/reactor.git"
   },
   "keywords": [
     "channel",
@@ -20,7 +20,7 @@
   "author": "Evgeny Kucherenko",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/evgkch/reagirjs/issues"
+    "url": "https://github.com/evgkch/reactor/issues"
   },
-  "homepage": "https://github.com/evgkch/reagirjs#readme"
+  "homepage": "https://github.com/evgkch/reactor#readme"
 }
